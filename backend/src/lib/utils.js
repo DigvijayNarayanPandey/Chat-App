@@ -42,7 +42,7 @@ export const setAccessTokenCookie = (token, res) => {
   res.cookie("jwt", token, {
     maxAge: 15 * 60 * 1000, // 15 minutes
     httpOnly: true,
-    sameSite: "strict",
+    sameSite: ENV.NODE_ENV === "development" ? "strict" : "none",
     secure: ENV.NODE_ENV === "development" ? false : true,
   });
 };
@@ -52,7 +52,7 @@ export const setRefreshTokenCookie = (token, res) => {
   res.cookie("refreshToken", token, {
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     httpOnly: true,
-    sameSite: "strict",
+    sameSite: ENV.NODE_ENV === "development" ? "strict" : "none",
     secure: ENV.NODE_ENV === "development" ? false : true,
     path: "/api/auth/refresh", // Only sent to refresh endpoint
   });
