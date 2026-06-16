@@ -14,9 +14,59 @@ function SignUpPage() {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-[#0f172a] p-4">
-      <div className="w-full max-w-5xl flex flex-col md:flex-row rounded-2xl overflow-hidden shadow-2xl border border-slate-700/40"
-           style={{ background: "linear-gradient(145deg,#172033,#1e293b)" }}>
+    <div className="w-full flex items-center justify-center p-0 md:p-4 bg-slate-900">
+      <div className="relative w-full max-w-6xl h-[100dvh] md:h-[800px]">
+        <BorderAnimatedContainer>
+          <div className="w-full flex flex-col md:flex-row min-h-full">
+            {/* FORM CLOUMN - LEFT SIDE */}
+            <div className="md:w-1/2 p-8 flex items-center justify-center md:border-r border-slate-600/30">
+              <div className="w-full max-w-md">
+                {/* HEADING TEXT */}
+                <div className="text-center mb-8">
+                  <MessageCircleIcon className="w-12 h-12 mx-auto text-slate-400 mb-4" />
+                  <h2 className="text-2xl font-bold text-slate-200 mb-2">Create Account</h2>
+                  <p className="text-slate-400">Sign up for a new account</p>
+                </div>
+
+                {/* FORM */}
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  {/* FULL NAME */}
+                  <div>
+                    <label className="auth-input-label">Full Name</label>
+                    <div className="relative">
+                      <UserIcon className="auth-input-icon" />
+
+                      <input
+                        type="text"
+                        value={formData.fullName}
+                        onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                        className="input"
+                        placeholder="John Doe"
+                      />
+                    </div>
+                  </div>
+
+                  {/* EMAIL INPUT */}
+                  <div>
+                    <label className="auth-input-label">Email</label>
+                    <div className="relative">
+                      <MailIcon className="auth-input-icon" />
+
+                      <input
+                        type="email"
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        className="input"
+                        placeholder="johndoe@gmail.com"
+                      />
+                    </div>
+                  </div>
+
+                  {/* PASSWORD INPUT */}
+                  <div>
+                    <label className="auth-input-label">Password</label>
+                    <div className="relative">
+                      <LockIcon className="auth-input-icon" />
 
         {/* ── LEFT — FORM ── */}
         <div className="flex-1 flex items-center justify-center p-8 md:p-12">

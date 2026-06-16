@@ -17,38 +17,33 @@ function ChatHeader() {
   }, [setSelectedUser]);
 
   return (
-    <div className="flex justify-between items-center bg-base-300 border-b border-base-content/10 px-4 py-3 shrink-0">
-      <div className="flex items-center gap-3">
-        {/* Back arrow — only visible on mobile */}
+    <div
+      className="flex justify-between items-center bg-slate-800/50 border-b
+   border-slate-700/50 min-h-[72px] md:min-h-[84px] px-4 md:px-6 w-full"
+    >
+      <div className="flex items-center space-x-3">
+        {/* Back button on mobile */}
         <button
           onClick={() => setSelectedUser(null)}
-          className="md:hidden btn btn-ghost btn-sm btn-circle text-base-content/60 hover:text-base-content"
-          title="Back to chats"
+          className="md:hidden text-slate-400 hover:text-slate-200 transition-colors mr-1"
         >
-          <ArrowLeftIcon className="w-5 h-5" />
+          <ArrowLeftIcon className="w-6 h-6" />
         </button>
 
         <div className={`avatar ${isOnline ? "online" : "offline"}`}>
-          <div className="w-10 rounded-full">
+          <div className="w-10 md:w-12 rounded-full">
             <img src={selectedUser.profilePic || "/avatar.png"} alt={selectedUser.fullName} />
           </div>
         </div>
 
         <div>
-          <h3 className="font-semibold text-base-content leading-tight">{selectedUser.fullName}</h3>
-          <p className={`text-xs font-medium ${isOnline ? "text-success" : "text-base-content/50"}`}>
-            {isOnline ? "Online" : "Offline"}
-          </p>
+          <h3 className="text-slate-200 font-medium text-sm md:text-base">{selectedUser.fullName}</h3>
+          <p className="text-slate-400 text-xs md:text-sm">{isOnline ? "Online" : "Offline"}</p>
         </div>
       </div>
 
-      {/* Close / deselect — visible on md+ */}
-      <button
-        onClick={() => setSelectedUser(null)}
-        className="hidden md:flex btn btn-ghost btn-sm btn-circle text-base-content/60 hover:text-base-content"
-        title="Close chat"
-      >
-        <XIcon className="w-5 h-5" />
+      <button onClick={() => setSelectedUser(null)} className="hidden md:block">
+        <XIcon className="w-5 h-5 text-slate-400 hover:text-slate-200 transition-colors cursor-pointer" />
       </button>
     </div>
   );
