@@ -8,12 +8,16 @@
   syntax: "<angle>";
 }
 
-.input {
-  @apply w-full bg-slate-800/50 border border-slate-700 rounded-lg py-2 pl-10 pr-4 text-slate-200 placeholder-slate-400 focus:ring-2 focus:ring-cyan-500 focus:border-transparent;
+/* ── Auth page inputs: locked to dark style matching the card ── */
+.auth-input {
+  @apply w-full bg-slate-800/60 border border-slate-700 rounded-lg py-2.5 pl-10 pr-12
+         text-slate-200 placeholder-slate-500
+         focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent
+         transition-colors;
 }
 
 .auth-input-icon {
-  @apply absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 size-5;
+  @apply absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 size-5 pointer-events-none;
 }
 
 .auth-input-label {
@@ -21,15 +25,36 @@
 }
 
 .auth-badge {
-  @apply inline-flex items-center px-3 py-1 text-xs font-medium rounded-full bg-cyan-500/20 text-cyan-300;
+  @apply inline-flex items-center px-3 py-1 text-xs font-medium rounded-full
+         bg-cyan-500/20 text-cyan-300 border border-cyan-500/20;
 }
 
 .auth-btn {
-  @apply w-full bg-cyan-500 text-white rounded-lg py-2.5 font-medium
-  hover:bg-cyan-600 focus:ring-2 focus:ring-cyan-500;
+  @apply w-full bg-cyan-500 text-white rounded-lg py-2.5 font-semibold
+         hover:bg-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-500
+         transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed;
 }
 
 .auth-link {
   @apply px-4 py-2 inline-block bg-cyan-500/10 rounded-lg text-cyan-400
-  hover:text-cyan-500 text-sm transition-colors;
+         hover:bg-cyan-500/20 hover:text-cyan-300 text-sm transition-colors;
 }
+
+/* Rename .input to .auth-input (keep .input as alias) */
+.input {
+  @apply auth-input;
+}
+
+/* Animations */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slide-down {
+  from { transform: translateY(-16px); opacity: 0; }
+  to   { transform: translateY(0);     opacity: 1; }
+}
+
+.animate-fade-in  { animation: fade-in  0.25s ease-out forwards; }
+.animate-slide-down { animation: slide-down 0.25s ease-out forwards; }

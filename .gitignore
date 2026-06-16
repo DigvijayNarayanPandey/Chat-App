@@ -26,6 +26,8 @@ frontend/.env.local
 .vscode/*
 CLAUDE.md
 !.vscode/extensions.json
+docs
+.remember
 .idea
 .DS_Store
 *.suo
