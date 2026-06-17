@@ -73,7 +73,7 @@ function MessageInput() {
             setText(e.target.value);
             isSoundEnabled && playRandomKeyStrokeSound();
           }}
-          className="flex-1 bg-slate-800/50 border border-slate-700/50 rounded-lg py-2 px-3 md:px-4"
+          className="flex-1 bg-base-300/50 border border-base-content/20 text-base-content placeholder-base-content/40 rounded-lg py-2 px-3 md:px-4 focus:outline-none focus:border-cyan-500"
           placeholder="Type your message..."
         />
 
@@ -88,7 +88,7 @@ function MessageInput() {
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className={`bg-slate-800/50 text-slate-400 hover:text-slate-200 rounded-lg px-3 md:px-4 transition-colors ${
+          className={`bg-base-300/50 border border-base-content/20 text-base-content/60 hover:text-base-content rounded-lg px-3 md:px-4 transition-colors ${
             imagePreview ? "text-cyan-500" : ""
           }`}
         >

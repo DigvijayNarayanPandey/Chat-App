@@ -82,8 +82,6 @@ function ProfileHeader() {
           <button
             className="btn btn-ghost btn-sm btn-circle text-base-content/60 hover:text-base-content"
             onClick={() => {
-              mouseClickSound.currentTime = 0;
-              mouseClickSound.play().catch(() => {});
               setIsSettingsOpen(true);
             }}
             title="Settings"
