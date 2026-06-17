@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from "react-router";
 import ChatPage from "./pages/ChatPage";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
+import LandingPage from "./pages/LandingPage";
 import { useAuthStore } from "./store/useAuthStore";
 import { useEffect } from "react";
 import PageLoader from "./components/PageLoader";
@@ -24,13 +25,18 @@ function App() {
 
   return (
     <div className="min-h-screen w-full bg-base-100 text-base-content relative flex flex-col overflow-hidden">
-      {/* DECORATORS - GLOW SHAPES */}
-      <div className="absolute top-0 -left-4 size-96 bg-pink-500 opacity-20 blur-[100px] pointer-events-none" />
-      <div className="absolute bottom-0 -right-4 size-96 bg-cyan-500 opacity-20 blur-[100px] pointer-events-none" />
+      {/* DECORATORS - GLOW SHAPES - Only render if not on the Terra-themed Landing Page to avoid background bleeding */}
+      {window.location.pathname !== "/" && (
+        <>
+          <div className="absolute top-0 -left-4 size-96 bg-pink-500 opacity-20 blur-[100px] pointer-events-none" />
+          <div className="absolute bottom-0 -right-4 size-96 bg-cyan-500 opacity-20 blur-[100px] pointer-events-none" />
+        </>
+      )}
       <Routes>
-        <Route path="/" element={authUser ? <ChatPage /> : <Navigate to="/login" />} />
-        <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to="/" />} />
-        <Route path="/signup" element={!authUser ? <SignUpPage /> : <Navigate to="/" />} />
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/chat" element={authUser ? <ChatPage /> : <Navigate to="/login" />} />
+        <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to="/chat" />} />
+        <Route path="/signup" element={!authUser ? <SignUpPage /> : <Navigate to="/chat" />} />
       </Routes>
       <Toaster />
     </div>
