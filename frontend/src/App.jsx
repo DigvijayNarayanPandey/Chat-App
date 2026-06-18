@@ -1,4 +1,5 @@
-import { Navigate, Route, Routes, useLocation, lazy, Suspense } from "react-router";
+import { lazy, Suspense } from "react";
+import { Navigate, Route, Routes, useLocation } from "react-router";
 import LandingPage from "./pages/LandingPage";
 import { useAuthStore } from "./store/useAuthStore";
 import { useEffect } from "react";
@@ -37,11 +38,30 @@ function App() {
       )}
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Suspense fallback={<PageLoader />}>
-          <Route path="/chat" element={authUser ? <ChatPage /> : <Navigate to="/login" />} />
-          <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to="/chat" />} />
-          <Route path="/signup" element={!authUser ? <SignUpPage /> : <Navigate to="/chat" />} />
-        </Suspense>
+        <Route
+          path="/chat"
+          element={
+            <Suspense fallback={<PageLoader />}>
+              {authUser ? <ChatPage /> : <Navigate to="/login" />}
+            </Suspense>
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <Suspense fallback={<PageLoader />}>
+              {!authUser ? <LoginPage /> : <Navigate to="/chat" />}
+            </Suspense>
+          }
+        />
+        <Route
+          path="/signup"
+          element={
+            <Suspense fallback={<PageLoader />}>
+              {!authUser ? <SignUpPage /> : <Navigate to="/chat" />}
+            </Suspense>
+          }
+        />
       </Routes>
       <Toaster />
     </div>
