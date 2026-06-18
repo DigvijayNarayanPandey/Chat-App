@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 
 function LandingPage() {
-  const { authUser } = useAuthStore();
+  const { authUser, isCheckingAuth } = useAuthStore();
 
   useEffect(() => {
     const observerOptions = {
@@ -70,10 +70,14 @@ function LandingPage() {
           </div>
 
           <Link
-            to={authUser ? "/chat" : "/login"}
-            className="bg-[#4a7c59] text-white px-5 py-2.5 rounded-full font-semibold text-sm hover:bg-[#3d664a] active:scale-95 transition-all duration-200 shadow-md shadow-[#4a7c59]/10"
+            to={isCheckingAuth ? "#" : authUser ? "/chat" : "/login"}
+            className="bg-[#4a7c59] text-white px-5 py-2.5 rounded-full font-semibold text-sm hover:bg-[#3d664a] active:scale-95 transition-all duration-200 shadow-md shadow-[#4a7c59]/10 min-w-[120px] flex justify-center"
           >
-            {authUser ? "Go to Chat" : "Get Started"}
+            {isCheckingAuth ? (
+              <span className="flex items-center gap-2">
+                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+              </span>
+            ) : authUser ? "Go to Chat" : "Get Started"}
           </Link>
         </nav>
       </header>
@@ -91,10 +95,15 @@ function LandingPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
               <Link
-                to={authUser ? "/chat" : "/login"}
-                className="w-full sm:w-auto h-[52px] px-8 bg-[#4a7c59] text-white rounded-full font-bold flex items-center justify-center shadow-lg shadow-[#4a7c59]/20 hover:bg-[#3d664a] active:scale-[0.98] transition-all"
+                to={isCheckingAuth ? "#" : authUser ? "/chat" : "/login"}
+                className="w-full sm:w-auto h-[52px] px-8 bg-[#4a7c59] text-white rounded-full font-bold flex items-center justify-center shadow-lg shadow-[#4a7c59]/20 hover:bg-[#3d664a] active:scale-[0.98] transition-all min-w-[200px]"
               >
-                {authUser ? "Go to Chat Dashboard" : "Download Chatty"}
+                {isCheckingAuth ? (
+                  <span className="flex items-center gap-2">
+                    <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                    Loading...
+                  </span>
+                ) : authUser ? "Go to Chat Dashboard" : "Download Chatty"}
               </Link>
               <Link
                 to={authUser ? "/chat" : "/login"}
@@ -187,7 +196,8 @@ function LandingPage() {
         {/* ── FEATURES SECTION ── */}
         <section className="px-5 py-20 space-y-8 max-w-[600px] mx-auto">
           <div className="text-center mb-12 animate-on-scroll transition-all duration-700 opacity-0 translate-y-8">
-            <h2 className="text-2xl md:text-3xl font-extrabold mb-3 text-[#1a1c19]">Designed and Developed by Digvijay</h2>
+            <h2 className="text-2xl md:text-3xl font-extrabold mb-3 text-[#1a1c19]">Designed and Developed by</h2>
+            <p className="text-xl md:text-3xl font-extrabold mb-3 text-[#424941]">Digvijay Narayan Pandey</p>
           </div>
 
           {/* Feature Card 1 */}
@@ -238,10 +248,15 @@ function LandingPage() {
             </p>
 
             <Link
-              to={authUser ? "/chat" : "/signup"}
-              className="mt-4 px-8 py-4 bg-[#fdfcf9] text-[#4a7c59] rounded-full font-extrabold hover:bg-white active:scale-95 transition-all shadow-lg z-10"
+              to={isCheckingAuth ? "#" : authUser ? "/chat" : "/signup"}
+              className="mt-4 px-8 py-4 bg-[#fdfcf9] text-[#4a7c59] rounded-full font-extrabold hover:bg-white active:scale-95 transition-all shadow-lg z-10 min-w-[220px] flex justify-center"
             >
-              {authUser ? "Go to Chat Page" : "Get Chatty for Free"}
+              {isCheckingAuth ? (
+                <span className="flex items-center gap-2">
+                  <span className="w-5 h-5 border-2 border-[#4a7c59]/30 border-t-[#4a7c59] rounded-full animate-spin"></span>
+                  Loading...
+                </span>
+              ) : authUser ? "Go to Chat Page" : "Get Chatty for Free"}
             </Link>
           </div>
         </section>

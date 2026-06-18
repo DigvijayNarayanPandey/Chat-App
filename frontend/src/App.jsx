@@ -1,15 +1,17 @@
-import { Navigate, Route, Routes } from "react-router";
-import ChatPage from "./pages/ChatPage";
-import LoginPage from "./pages/LoginPage";
-import SignUpPage from "./pages/SignUpPage";
+import { Navigate, Route, Routes, useLocation, lazy, Suspense } from "react-router";
 import LandingPage from "./pages/LandingPage";
 import { useAuthStore } from "./store/useAuthStore";
 import { useEffect } from "react";
 import PageLoader from "./components/PageLoader";
 import { Toaster } from "react-hot-toast";
 
+const ChatPage = lazy(() => import("./pages/ChatPage"));
+const LoginPage = lazy(() => import("./pages/LoginPage"));
+const SignUpPage = lazy(() => import("./pages/SignUpPage"));
+
 function App() {
   const { checkAuth, isCheckingAuth, authUser } = useAuthStore();
+  const location = useLocation();
 
   // Apply saved theme globally on load
   useEffect(() => {
@@ -21,7 +23,8 @@ function App() {
     checkAuth();
   }, [checkAuth]);
 
-  if (isCheckingAuth) return <PageLoader />;
+  // Only show the full page loader if we're checking auth AND we are not on the landing page
+  if (isCheckingAuth && location.pathname !== "/") return <PageLoader />;
 
   return (
     <div className="min-h-screen w-full bg-base-100 text-base-content relative flex flex-col overflow-hidden">
@@ -34,9 +37,11 @@ function App() {
       )}
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/chat" element={authUser ? <ChatPage /> : <Navigate to="/login" />} />
-        <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to="/chat" />} />
-        <Route path="/signup" element={!authUser ? <SignUpPage /> : <Navigate to="/chat" />} />
+        <Suspense fallback={<PageLoader />}>
+          <Route path="/chat" element={authUser ? <ChatPage /> : <Navigate to="/login" />} />
+          <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to="/chat" />} />
+          <Route path="/signup" element={!authUser ? <SignUpPage /> : <Navigate to="/chat" />} />
+        </Suspense>
       </Routes>
       <Toaster />
     </div>
