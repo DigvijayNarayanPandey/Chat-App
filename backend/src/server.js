@@ -23,6 +23,11 @@ app.use(securityHeaders); // Add security headers middleware
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 
+// Health check endpoint for UptimeRobot to keep the server awake
+app.get("/api", (req, res) => {
+  res.status(200).send("API is running");
+});
+
 // make ready for deployment
 if (ENV.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../frontend/dist")));

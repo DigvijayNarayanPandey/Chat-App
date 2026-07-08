@@ -19,7 +19,26 @@ export const useChatStore = create((set, get) => ({
   },
 
   setActiveTab: (tab) => set({ activeTab: tab }),
-  setSelectedUser: (selectedUser) => set({ selectedUser }),
+  setSelectedUser: async (selectedUser) => {
+    set({ selectedUser });
+    if (selectedUser) {
+      // Mark messages as read when user opens a chat
+      try {
+        await axiosInstance.patch(`/messages/read/${selectedUser._id}`);
+        // Emit socket event to notify the other user that messages have been read
+        const socket = useAuthStore.getState().socket;
+        if (socket) {
+          const { authUser } = useAuthStore.getState();
+          socket.emit("messagesRead", {
+            readerId: authUser._id,
+            chatUserId: selectedUser._id,
+          });
+        }
+      } catch (error) {
+        console.error("Failed to mark messages as read:", error);
+      }
+    }
+  },
 
   getAllContacts: async () => {
     set({ isUsersLoading: true });
@@ -69,17 +88,18 @@ export const useChatStore = create((set, get) => ({
       text: messageData.text,
       image: messageData.image,
       createdAt: new Date().toISOString(),
-      isOptimistic: true, // flag to identify optimistic messages (optional)
     };
     // immidetaly update the ui by adding the message
     set({ messages: [...messages, optimisticMessage] });
 
     try {
       const res = await axiosInstance.post(`/messages/send/${selectedUser._id}`, messageData);
-      set({ messages: messages.concat(res.data) });
+      // Replace the optimistic temp message with the real message from the server
+      // Uses get().messages (live state) instead of the stale `messages` closure
+      set({ messages: get().messages.map((msg) => (msg._id === tempId ? res.data : msg)) });
     } catch (error) {
-      // remove optimistic message on failure
-      set({ messages: messages });
+      // Remove only the optimistic message on failure, preserving any other new messages
+      set({ messages: get().messages.filter((msg) => msg._id !== tempId) });
       toast.error(error.response?.data?.message || "Something went wrong");
     }
   },
@@ -90,12 +110,26 @@ export const useChatStore = create((set, get) => ({
 
     const socket = useAuthStore.getState().socket;
 
-    socket.on("newMessage", (newMessage) => {
+    socket.on("newMessage", async (newMessage) => {
       const isMessageSentFromSelectedUser = newMessage.senderId === selectedUser._id;
       if (!isMessageSentFromSelectedUser) return;
 
       const currentMessages = get().messages;
       set({ messages: [...currentMessages, newMessage] });
+
+      // Since the chat is open, mark the message as read on backend and emit read receipt in real-time
+      try {
+        await axiosInstance.patch(`/messages/read/${selectedUser._id}`);
+        if (socket) {
+          const { authUser } = useAuthStore.getState();
+          socket.emit("messagesRead", {
+            readerId: authUser._id,
+            chatUserId: selectedUser._id,
+          });
+        }
+      } catch (error) {
+        console.error("Failed to mark incoming message as read:", error);
+      }
 
       // Always read the CURRENT value of isSoundEnabled (avoid stale closure)
       if (get().isSoundEnabled) {

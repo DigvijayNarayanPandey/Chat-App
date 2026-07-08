@@ -40,6 +40,15 @@ io.on("connection", (socket) => {
     delete userSocketMap[userId];
     io.emit("getOnlineUsers", Object.keys(userSocketMap));
   });
+
+  // Listen for read receipts
+  socket.on("messagesRead", ({ readerId, chatUserId }) => {
+    // Emit to the sender (chatUserId) that the reader (readerId) has read messages
+    const senderSocketId = getReceiverSocketId(chatUserId);
+    if (senderSocketId) {
+      io.to(senderSocketId).emit("messagesRead", { readerId, chatUserId });
+    }
+  });
 });
 
 export { io, app, server };
