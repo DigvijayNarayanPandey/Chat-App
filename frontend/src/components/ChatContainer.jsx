@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useMemo } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import { useChatStore } from "../store/useChatStore";
 import ChatHeader from "./ChatHeader";
@@ -30,6 +30,39 @@ function ChatContainer() {
 
   const messageEndRef = useRef(null);
 
+  // Helper function to format date header
+  const getDateHeader = (date) => {
+    const today = new Date().toDateString();
+    const yesterday = new Date(Date.now() - 86400000).toDateString();
+    const thisWeek = new Date(Date.now() - 7 * 86400000).toDateString();
+
+    if (date === today) return "Today";
+    if (date === yesterday) return "Yesterday";
+    if (date > thisWeek) {
+      // Return day name (Mon, Tue, etc.)
+      return new Date(date).toLocaleDateString('en-GB', { weekday: 'long' });
+    }
+    // Return short date format (e.g., 10/25 or 10/25/23)
+    return new Date(date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  };
+
+  // Process messages to add date headers
+  const processedMessages = useMemo(() => {
+    const processed = [];
+    let previousDate = null;
+
+    messages.forEach((msg) => {
+      const messageDate = new Date(msg.createdAt).toDateString();
+      if (previousDate !== messageDate) {
+        processed.push({ type: 'date', date: messageDate });
+        previousDate = messageDate;
+      }
+      processed.push({ type: 'message', message: msg });
+    });
+
+    return processed;
+  }, [messages]);
+
   // Fetch messages and subscribe to new messages when selectedUser changes
   useEffect(() => {
     getMessagesByUserId(selectedUser._id);
@@ -50,7 +83,7 @@ function ChatContainer() {
 
   // Listen for read receipts to update messages when the other user reads our messages
   useEffect(() => {
-    const handleMessagesRead = ({ readerId, chatUserId }) => {
+    const handleMessagesRead = ({ readerId }) => {
       // If we are the reader or the readerId doesn't match the selected user, ignore
       if (authUser._id === readerId || readerId !== selectedUser._id) {
         return;
@@ -73,7 +106,16 @@ function ChatContainer() {
       <div className="flex-1 px-3 md:px-6 overflow-y-auto py-4 md:py-8">
         {messages.length > 0 && !isMessagesLoading ? (
           <div className="max-w-3xl mx-auto space-y-4 md:space-y-6">
-            {messages.map((msg) => {
+            {processedMessages.map((item, index) => {
+              if (item.type === 'date') {
+                return (
+                  <div key={`date-${index}`} className="text-center text-xs text-muted-content mb-2 mt-4">
+                    {getDateHeader(item.date)}
+                  </div>
+                );
+              }
+
+              const msg = item.message;
               const isSentByCurrentUser = msg.senderId === authUser._id;
               let receipt = null;
               if (isSentByCurrentUser) {
@@ -97,7 +139,7 @@ function ChatContainer() {
 
               return (
                 <div
-                  key={msg._id}
+                  key={`message-${msg._id}`}
                   className={`chat ${isSentByCurrentUser ? "chat-end" : "chat-start"}`}
                 >
                   <div
